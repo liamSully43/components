@@ -1,0 +1,74 @@
+/* 
+    breakpoints:
+    1200px desktop
+    1024px laptop
+    768px  tablet
+    480px  mobile
+*/
+
+// CSS RESETS
+* {
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+ul,
+ul li {
+    list-style-type: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+button, [role="button"] {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+html, body {
+    min-height: 100vh;
+}
+
+// VARIABLES
+:root {
+    --x-large: 150px;
+    --large: 75px;
+    --medium: 50px;
+    --small: 25px;
+    --x-small: 10px;
+}
+
+.desktop,
+.laptop,
+.tablet,
+.mobile {
+    display: none;
+}
+
+.desktop {
+    @media(min-width: 1200px) {
+        display: unset;
+    }
+}
+
+.laptop {
+    @media(max-width: 1199px) and (min-width: 1025px) {
+        display: unset;
+    }
+}
+
+.tablet {
+    @media(max-width: 1024px) and (min-width: 481px) {
+        display: unset;
+    }
+}
+
+.mobile {
+    @media(max-width: 480px) {
+        display: unset;
+    }
+}

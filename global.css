@@ -1,0 +1,71 @@
+/* 
+    breakpoints:
+    1200px desktop
+    1024px laptop
+    768px  tablet
+    480px  mobile
+*/
+* {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+ul,
+ul li {
+  list-style-type: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+button, [role=button] {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+html, body {
+  min-height: 100vh;
+}
+
+:root {
+  --x-large: 150px;
+  --large: 75px;
+  --medium: 50px;
+  --small: 25px;
+  --x-small: 10px;
+}
+
+.desktop,
+.laptop,
+.tablet,
+.mobile {
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  .desktop {
+    display: unset;
+  }
+}
+
+@media (max-width: 1199px) and (min-width: 1025px) {
+  .laptop {
+    display: unset;
+  }
+}
+
+@media (max-width: 1024px) and (min-width: 481px) {
+  .tablet {
+    display: unset;
+  }
+}
+
+@media (max-width: 480px) {
+  .mobile {
+    display: unset;
+  }
+}/*# sourceMappingURL=global.css.map */

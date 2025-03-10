@@ -1,0 +1,25 @@
+html, body {
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.cursor-container {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.cursor-container .cursor {
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
+  transform: translate(-50%, -50%);
+  background-color: transparent;
+  border: solid 1px #000;
+  transition: background-color 0.3s;
+}
+.cursor-container .cursor:hover {
+  background-color: #000;
+  transition-duration: 0.5s;
+}/*# sourceMappingURL=lerp.css.map */

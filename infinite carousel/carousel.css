@@ -1,0 +1,47 @@
+#example-carousel {
+  --carousel-width: 100%;
+  --slide-container-width: 100%;
+  --slide-count: 4;
+  --gap-count: calc(var(--slide-count) - 1);
+  --slide-width: calc((100% - (var(--slide-gap) * var(--gap-count))) / var(--slide-count));
+  --slide-height: auto;
+  --slide-gap: var(--medium);
+  --button-size: 55px;
+  --button-gap: 5px;
+  --button-gutter: var(--medium);
+}
+
+.carousel {
+  position: relative;
+  width: var(--carousel-width);
+  min-width: var(--carousel-width);
+  min-height: var(--slide-height);
+  height: auto;
+  display: grid;
+  place-items: center;
+}
+.carousel .carousel-container {
+  width: var(--slide-container-width);
+  height: auto;
+  overflow: hidden;
+  display: flex;
+  gap: var(--slide-gap);
+  z-index: 1;
+}
+.carousel .carousel-container .slide {
+  position: relative;
+  min-width: var(--slide-width, auto);
+  height: var(--slide-height, auto);
+  translate: 0px 0px;
+  transition: translate 0.5s ease-out, opacity 1s;
+}
+.carousel .carousel-controls button {
+  width: var(--button-size);
+  height: var(--button-size);
+  pointer-events: all;
+}
+@media (max-width: 485px) {
+  .standard-carousel {
+    --button-size: 35px;
+  }
+}/*# sourceMappingURL=carousel.css.map */

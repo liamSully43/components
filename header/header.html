@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Header</title>
+    <link rel="stylesheet" href="./header.css">
+    <link rel="stylesheet" href="../global.css">
+</head>
+<body>
+    <header class="sticky-header">
+        <a href="">My Logo</a>
+        <nav class="desktop laptop">
+            <ul>
+                <li>Home</li>
+                <li>About</li>
+                <li>Services</li>
+                <li>Case Studies</li>
+                <li>Contact</li>
+            </ul>
+        </nav>
+        <button>Quote</button>
+        <div class="tablet mobile">
+            <button class="burger-menu" data-ref="bm-nav-1">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <div class="burger-menu-nav tablet mobile" id="bm-nav-1">
+            <div class="burger-menu-nav-content">
+                <nav>
+                    <ul>
+                    <li>Home</li>
+                    <li>About</li>
+                    <li>Services</li>
+                    <li>Case Studies</li>
+                    <li>Contact</li>
+                </ul>
+            </nav>
+        </div>
+        </div>
+    </header>
+
+    <main style="min-height: 1000vh;"></main>
+
+    <script src="./header.js"></script>
+</body>
+</html>
+
+<!--
+
+The burger menu on desktop is quite easy - you just use flexbox on the header and add items as needed to the header element
+by default it will be centered, but if the middle items need to be aligned to either side you can do so with margin-left/right: auto
+
+The burger menu is a little harder, we will need global classes for all of the breakpoints (site wide, not just this component) that correlate to screensizes,
+i.e. tablet, mobile, small-mobile, etc.
+We can then hide certain elements easily on different screensizes using classes, things like hiding the burger menu on desktop for example, and nav items in the burger menu
+on mobile/tablet.
+
+The menu itself will sometime need to be placed in the header so that burger menu will appear on top to close it, and othertimes it will need to be placed
+outside of the header.
+In this instance we will need a duplicate close button in the burger menu that can be used to close the menu - need JS to check if that button exists and if it does, 
+add the click event
+
+Is it also worth considering styling/support for dropdowns? Some basic CSS that can handle holding an icon and then also supporting the dropdown function - JS as well
+
+-->

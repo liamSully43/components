@@ -1,0 +1,33 @@
+.slider-container {
+  width: auto;
+  height: auto;
+  display: grid;
+  place-items: center;
+}
+.slider-container .slider {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  overflow: hidden;
+}
+.slider-container .slider .track {
+  position: relative;
+  width: auto;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  animation: slideSlider 40s linear infinite;
+  animation-play-state: running;
+}
+.slider-container .slider.pause-on-hover:hover .track {
+  animation-play-state: paused;
+}
+
+@keyframes slideSlider {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}/*# sourceMappingURL=slider.css.map */

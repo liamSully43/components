@@ -1,0 +1,23 @@
+.slider-container {
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+    
+    .slider {
+        width: calc(100% - (var(--medium) * 2));
+        
+        .track {
+            .item {
+                width: 250px;
+                // use margin instead of gap (on .track) as this will add space between the tracks and means the
+                // elements will reset to the correct position at the end of the animation (the gap between the tracks
+                // is not included in the -100% translate property in the animation, but the margin-right is, i.e no jump)
+                margin-right: var(--large);
+
+                &:first-of-type {
+                    border: solid 3px red !important;
+                }
+            }
+        }
+    }
+}

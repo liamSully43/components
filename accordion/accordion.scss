@@ -1,0 +1,10 @@
+.accordion {
+    .accordion-item {
+        .accordion-body {
+            width: auto;
+            height: 0px;
+            transition: height 0.3s;
+            overflow: hidden;
+        }
+    }
+}

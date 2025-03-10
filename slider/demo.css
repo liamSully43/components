@@ -1,0 +1,15 @@
+.slider-container {
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+}
+.slider-container .slider {
+  width: calc(100% - var(--medium) * 2);
+}
+.slider-container .slider .track .item {
+  width: 250px;
+  margin-right: var(--large);
+}
+.slider-container .slider .track .item:first-of-type {
+  border: solid 3px red !important;
+}/*# sourceMappingURL=demo.css.map */

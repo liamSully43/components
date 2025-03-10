@@ -1,0 +1,94 @@
+#full-screen {
+    --x-large: 150px;
+    --large: 100px;
+    --medium: 50px;
+    --small: 25px;
+    --x-small: 15px;
+
+    --carousel-width: 100%;
+    --slide-container-width: 100%;
+    --slide-count: 1;
+    --gap-count: 0;
+    --slide-width: calc((100% - (var(--slide-gap) * var(--gap-count))) / var(--slide-count));
+    --slide-height: 50vh;
+    --slide-gap: var(--medium);
+    --button-size: var(--medium);
+    --button-gap: var(--x-small);
+    --button-gutter: var(--medium);
+
+    .slide {
+        border: solid 1px black;
+        display: grid;
+        place-items: center;
+        color: black;
+        font-size: 60px;
+        font-weight: bold;
+        font-family: sans-serif;
+    }
+
+    .carousel-dots {
+        display: flex;
+        justify-content: center;
+        place-items: center;
+        gap: var(--button-gap);
+
+        .dot {
+            width: 20px;
+            height: 20px;
+            border: solid 2px black;
+            background-color: white;
+            border-radius: 100%;
+
+            &.active {
+                background-color: black;
+            }
+        }
+    }
+
+    .carousel-controls {
+        width: calc(100% - var(--button-gutter));
+        display: flex;
+        justify-content: center;
+        gap: var(--button-gap);
+        align-items: center;
+        pointer-events: none;
+        z-index: 2;
+
+        button {
+            &:disabled {
+                cursor: default;
+                opacity: 0.5;
+            }
+        }
+    }
+
+    // fade styling
+    .carousel-container {
+        position: relative;
+
+        .slide {
+            translate: unset !important;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .active {
+            position: relative;
+            top: 0px;
+            left: 0px;
+            transform: unset;
+            z-index: 3;
+            opacity: 1;
+        }
+
+        .next {
+            z-index: 2;
+            opacity: 0;
+        }
+    }
+}
