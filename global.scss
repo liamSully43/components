@@ -1,11 +1,3 @@
-/* 
-    breakpoints:
-    1200px desktop
-    1024px laptop
-    768px  tablet
-    480px  mobile
-*/
-
 // CSS RESETS
 * {
     padding: 0px;
@@ -35,11 +27,55 @@ html, body {
 
 // VARIABLES
 :root {
+    --page-width: 1600px;
+    --padding: 30px;
+    --align-w-content: max(0px, calc(((100% - var(--page-width)) / 2)) + var(--padding));
     --x-large: 150px;
     --large: 75px;
     --medium: 50px;
     --small: 25px;
     --x-small: 10px;
+
+    --desktop: 1200px;
+    --laptop: 1024px;
+    --tablet: 768px;
+    --mobile: 480px;
+}
+
+@mixin desktop {
+    @media(min-width: 1200px) {
+        @content;
+    }
+}
+
+@mixin laptop {
+    @media(max-width: 1199px) {
+        @content;
+    }
+}
+
+@mixin laptop-strict {
+    @media(max-width: 1199px) and (min-width: 1025px) {
+        @content;
+    }
+}
+
+@mixin tablet {
+    @media(max-width: 1024px) {
+        @content;
+    }
+}
+
+@mixin tablet-strict {
+    @media(max-width: 1024px) and (min-width: 481px) {
+        @content;
+    }
+}
+
+@mixin mobile {
+    @media(max-width: 480px) {
+        @content;
+    }
 }
 
 .desktop,
@@ -50,25 +86,72 @@ html, body {
 }
 
 .desktop {
-    @media(min-width: 1200px) {
+    @include desktop {
         display: unset;
     }
 }
 
 .laptop {
-    @media(max-width: 1199px) and (min-width: 1025px) {
+    @include laptop-strict {
         display: unset;
     }
 }
 
 .tablet {
-    @media(max-width: 1024px) and (min-width: 481px) {
+    @include tablet-strict {
         display: unset;
     }
 }
 
 .mobile {
-    @media(max-width: 480px) {
+    @include mobile {
         display: unset;
+    }
+}
+
+.full-width {
+    width: 100%;
+    padding: 0px var(--padding);
+}
+
+.content-width,
+.extra-padding {
+    width: 100%;
+    max-width: var(--page-width);
+    margin: auto;
+}
+
+.content-width {
+    padding: 0px var(--padding);
+}
+
+.extra-padding {
+    padding: 0px calc(var(--padding) * 2);
+}
+
+.content-align-left,
+.content-align-right {
+    width: calc(((100% - var(--page-width)) / 2) + var(--page-width));
+    padding: 0px var(--padding);
+    max-width: 100%;
+}
+
+.content-align-left {
+    margin-left: auto;
+}
+
+.content-align-right {
+    margin-right: auto;
+}
+
+.column-layout {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--x-small);
+}
+
+.content-width {
+    @include tablet {
+        background-color: red !important;
     }
 }
