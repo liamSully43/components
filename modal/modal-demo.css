@@ -1,0 +1,30 @@
+body {
+  background-color: whitesmoke;
+}
+
+nav {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  padding: 20px 40px;
+}
+nav button {
+  font-weight: 800;
+}
+nav button:hover {
+  text-decoration: underline;
+}
+
+.modal .content {
+  padding: 30px;
+}
+.modal .content p {
+  font-size: 20px;
+  text-align: center;
+  font-family: sans-serif;
+}
+
+#modal3 .content .close {
+  color: black;
+}/*# sourceMappingURL=modal-demo.css.map */

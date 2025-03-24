@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal</title>
+    <link rel="stylesheet" href="../global.css">
+    <link rel="stylesheet" href="./modal.css">
+    <link rel="stylesheet" href="./modal-demo.css">
+</head>
+<body>
+    <nav>
+        <button class="modal-link" data-ref="modal1">Modal 1</button>
+        <button class="modal-link" data-ref="modal2">Modal 2</button>
+        <button class="modal-link" data-ref="modal3">Modal 3</button>
+    </nav>
+
+    <div class="modal" id="modal1">
+        <button class="close">&#x2715;</button>
+        <div class="content">
+            <p>Modal 1</p>
+        </div>
+    </div>
+
+    <div class="modal" id="modal2">
+        <button class="close">&#x2715;</button>
+        <div class="content">
+            <p>Modal 2</p>
+        </div>
+    </div>
+
+    <div class="modal" id="modal3">
+        <div class="content">
+            <button class="close">&#x2715;</button>
+            <p>Modal 3</p>
+        </div>
+    </div>
+
+    <script src="./modal.js"></script>
+</body>
+</html>
