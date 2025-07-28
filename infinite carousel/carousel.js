@@ -1,19 +1,27 @@
 const carousels = $(".carousel");
-carousels.each(i => {
+carousels.each((i, carousel) => {
     // unique id
-    const id = $(carousels[i]).attr("id");
+    const id = $(carousel).attr("id");
 
-    // add classes if they don't already exist
-    if($(`#${id} .carousel-container .slide.active`).length < 1) {
-        $(`#${id} .carousel-container .slide:first-of-type`).addClass("active");
+    // Center active slide
+    if($(carousel).hasClass("center")) {
+        const slides = $(`#${id} .carousel-container .slide`);
+        const activeSlide = slides.filter(".active");
+        const slideIndex = slides.index(activeSlide);
+        let distance = getWidth() * slideIndex;
+        if(distance < 0) distance = 0;
+        slides.map((i, slide) => {
+            const newVW = (distance / window.innerWidth) * 100;
+            $(slide).css("transform", `translateX(calc((50vw - 50%) - ${newVW}vw))`);
+        });
+
+        // add active class to dots
+        if($(`#${id} .carousel-dots .dot`).length > 0) {
+            const dotIndex = slideIndex + 1;
+            $(`#${id} .carousel-dots .dot:nth-of-type(${dotIndex})`).addClass("active");
+        }
     }
-    if($(`#${id} .carousel-container .slide.prev`).length < 1) {
-        $(`#${id} .carousel-container .slide:last-of-type`).addClass("active");
-    }
-    if($(`#${id} .carousel-container .slide.next`).length < 1) {
-        $(`#${id} .carousel-container .slide:nth-of-type(2)`).addClass("active");
-    }
-    if($(`#${id} .carousel-dots .dot:first-of-type`).length > 0) {
+    else {
         $(`#${id} .carousel-dots .dot:first-of-type`).addClass("active");
     }
 
@@ -29,10 +37,10 @@ carousels.each(i => {
         }
         
         let touchStart = 0;
-        $(carousels[i]).on("touchstart", function(event) {
+        $(carousel).on("touchstart", function(event) {
             touchStart = event.touches[0].clientX;
         });
-        $(carousels[i]).on("touchend", function(event) {
+        $(carousel).on("touchend", function(event) {
             const touchend = event.changedTouches[0].clientX;
             const difference = touchStart - touchend;
             if(touchStart > touchend) {
@@ -56,7 +64,7 @@ carousels.each(i => {
     let autoInterval = false;
     function autoSwipe() {
         // check if carousel has auto-swipe class
-        if(!$(carousels[i]).hasClass("auto-swipe")) return;
+        if(!$(carousel).hasClass("auto-swipe")) return;
         
         // clear interval if already triggered
         if(autoInterval) {
@@ -64,7 +72,7 @@ carousels.each(i => {
         }
 
         // get swipe duration
-        const dataDuration = $(carousels[i]).data("duration");
+        const dataDuration = $(carousel).data("duration");
         const duration = (dataDuration) ? parseInt(dataDuration) : 5000;
         
         // interval
@@ -79,42 +87,46 @@ carousels.each(i => {
         const sliding = checkIfSliding(false);
         if(sliding) return;
         
+        // slide slides
         const width = getWidth();
         const slides = $(`#${id} .carousel-container .slide`);
 
-        // adjust position when slides are offscreen
         const slidesContainer = $(`#${id} .carousel-container`);
         const containerPos = slidesContainer[0].getClientRects()[0];
+        const rightBoundary = (containerPos.right < window.innerWidth) ? containerPos.right : window.innerWidth;
 
-        // slide slides
         setTimeout(() => {
-            slides.map(slide => {
-                slide = slides[slide];
+            slides.map((i, slide) => {
+                // current slide position
                 let left = parseFloat($(slide).css("translate"));
                 if(isNaN(left)) left = 0; // if translate is not used on element yet, Safair will return NaN
-                const newPos = left + width;
-                $(slide).css("translate", `${newPos}px 0px`);
+
+                // adjust position if slides are offscreen
+                const slidePos = slide.getClientRects()[0];
+                if(slidePos.left >= rightBoundary) {
+                    // remove transition/animation
+                    const transitionProp = $(slide).css("transition");
+                    $(slide).css("transition", "unset");
+
+                    // update new position
+                    left -= (width * slides.length);
+                    const newVW = (left / window.innerWidth) * 100;
+                    $(slide).css("translate", `${newVW}vw 0px`);
+                    
+                    // re-add transition/animation
+                    setTimeout(() => {
+                        $(slide).css("transition", transitionProp);
+                    }, 15); // delay needed in order to move the slide without animating/transitioning 
+                }
+
+                // slide the slides
+                setTimeout(() => {
+                    const newPos = left + width;
+                    const newVW = (newPos / window.innerWidth) * 100;
+                    $(slide).css("translate", `${newVW}vw 0px`);
+                }, 16); // delay is needed for all slides so that off screen slides won't be out of sync due to the delay used when re-adding the transition
             });
         }, 15);
-
-        slides.map(slide => {
-            slide = slides[slide];
-            const slidePos = slide.getClientRects()[0];
-            if(slidePos.left > containerPos.right) {
-                // remove transition/animation
-                const transitionProp = $(slide).css("transition");
-                $(slide).css("transition", "unset");
-
-                // update new position
-                const newPos = parseFloat($(slide).css("translate")) - (width * slides.length);
-                $(slide).css("translate", `${newPos}px 0px`);
-                
-                // re-add transition/animation
-                setTimeout(() => {
-                    $(slide).css("transition", transitionProp);
-                }, 10);
-            }
-        });
 
         // reset autoswipe
         autoSwipe();
@@ -127,39 +139,46 @@ carousels.each(i => {
         const sliding = checkIfSliding(true);
         if(sliding) return;
 
+        // slide slides
         const width = getWidth();
         const slides = $(`#${id} .carousel-container .slide`);
-        setTimeout(() => {
-            slides.map(slide => {
-                slide = slides[slide];
-                let left = parseFloat($(slide).css("translate"));
-                if(isNaN(left)) left = 0; // if translate is not used on element yet, Safair will return NaN
-                const newPos = left - width;
-                $(slide).css("translate", `${newPos}px 0px`);
-            });
-        }, 10);
 
-        // adjust position when slides are offscreen
         const slidesContainer = $(`#${id} .carousel-container`);
         const containerPos = slidesContainer[0].getClientRects()[0];
-        slides.map(slide => {
-            slide = slides[slide];
-            const slidePos = slide.getClientRects()[0];
-            if(slidePos.right < containerPos.left) {
-                // remove transition/animation
-                const transitionProp = $(slide).css("transition");
-                $(slide).css("transition", "unset");
+        const leftBoundary = (containerPos.left > 0) ? containerPos.left : 0;
 
-                // update new position
-                const newPos = parseFloat($(slide).css("translate")) + (width * slides.length);
-                $(slide).css("translate", `${newPos}px 0px`);
-                
-                // re-add transition/animation
-                setTimeout(() => {
-                    $(slide).css("transition", transitionProp);
-                }, 10);
-            }
-        });
+        setTimeout(() => {
+            slides.map((i, slide) => {
+                // current slide position
+                let left = parseFloat($(slide).css("translate"));
+                if(isNaN(left)) left = 0; // if translate is not used on element yet, Safair will return NaN
+
+                // adjust position if slides are offscreen
+                const slidePos = slide.getClientRects()[0];
+                if(slidePos.right <= leftBoundary) {
+                   // remove transition/animation
+                    const transitionProp = $(slide).css("transition");
+                    $(slide).css("transition", "unset");
+
+                    // update new position
+                    left += (width * slides.length);
+                    const newVW = (left / window.innerWidth) * 100;
+                    $(slide).css("translate", `${newVW}vw 0px`);
+                    
+                    // re-add transition/animation
+                    setTimeout(() => {
+                        $(slide).css("transition", transitionProp);
+                    }, 15); // delay needed in order to move the slide without animating/transitioning 
+                }
+
+                // slide the slides
+                setTimeout(() => {  
+                    const newPos = left - width;
+                    const newVW = (newPos / window.innerWidth) * 100;
+                    $(slide).css("translate", `${newVW}vw 0px`);
+                }, 16); // delay is needed for all slides so that off screen slides won't be out of sync due to the delay used when re-adding the transition
+            });
+        }, 15);
 
         // reset autoswipe
         autoSwipe();
@@ -169,7 +188,7 @@ carousels.each(i => {
     }
     
     let sliding = false;
-    function checkIfSliding(forward) {
+    function checkIfSliding() {
         // check if currently sliding - prevents spam clicks from breaking carousel
         if(sliding) {
             return true;
@@ -237,10 +256,10 @@ carousels.each(i => {
     }
     
     function getWidth() {
-        const carousel = $(`#${id}`);
-        const slide = carousel.find(".slide");
+        const c = $(carousel);
+        const slide = c.find(".slide");
         const width = parseFloat(slide.css("width"));
-        const gap = parseFloat(carousel.find(".carousel-container").css("gap"));
+        const gap = parseFloat(c.find(".carousel-container").css("gap"));
         return width + gap;
     }
 
@@ -276,32 +295,31 @@ carousels.each(i => {
 
         // update dots
         let currentIndex = 0;
-        dots.each(i => {
-            if($(dots[i]).hasClass("active")) currentIndex = i;
+        dots.each((i, dot) => {
+            if($(dot).hasClass("active")) currentIndex = i;
         });
-        const difference = currentIndex - index; // number of slides to slide
         $(`#${id} .dot.active`).removeClass("active");
         $(dots[index]).addClass("active");
 
-        // move slides
+        // move slides into position
+        const difference = currentIndex - index; // number of slides to slide
         const width = getWidth() * difference;
         setTimeout(() => {
-            slides.map(slide => {
-                slide = slides[slide];
+            slides.map((i, slide) => {
                 let left = parseFloat($(slide).css("translate"));
                 if(isNaN(left)) left = 0; // if translate is not used on element yet, Safair will return NaN
                 const newPos = left + width;
-                $(slide).css("translate", `${newPos}px 0px`);
+                const newVW = (newPos / window.innerWidth) * 100;
+                $(slide).css("translate", `${newVW}vw 0px`);
             });
-        }, 10);
+        }, 15);
 
         // reset auto swipe
         autoSwipe();
     }
-    if($(carousels[i]).find(".carousel-dots").length > 0) {
+    if($(carousel).find(".carousel-dots").length > 0) {
         const dots = $(`#${id} .dot`);
-        dots.each(j => {
-            const dot = dots[j];
+        dots.each((j, dot) => {
             $(dot).on("click", () => selectSlide(j, dots));
         })
     }

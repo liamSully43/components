@@ -1,4 +1,4 @@
-#multi-coumn {
+#multi-column {
   --x-large: 150px;
   --large: 100px;
   --medium: 50px;
@@ -16,12 +16,12 @@
   --button-gutter: var(--medium);
 }
 @media (max-width: 768px) {
-  #multi-coumn {
+  #multi-column {
     --slide-count: 2;
     --gap-count: 1;
   }
 }
-#multi-coumn .slide {
+#multi-column .slide {
   border: solid 1px black;
   display: grid;
   place-items: center;
@@ -30,23 +30,41 @@
   font-weight: bold;
   font-family: sans-serif;
 }
-#multi-coumn .carousel-dots {
+#multi-column .slide:nth-of-type(1) {
+  background-color: red;
+}
+#multi-column .slide:nth-of-type(2) {
+  background-color: orange;
+}
+#multi-column .slide:nth-of-type(3) {
+  background-color: yellow;
+}
+#multi-column .slide:nth-of-type(4) {
+  background-color: green;
+}
+#multi-column .slide:nth-of-type(5) {
+  background-color: blue;
+}
+#multi-column .slide:nth-of-type(6) {
+  background-color: purple;
+}
+#multi-column .carousel-dots {
   display: flex;
   justify-content: center;
   place-items: center;
   gap: var(--button-gap);
 }
-#multi-coumn .carousel-dots .dot {
+#multi-column .carousel-dots .dot {
   width: 20px;
   height: 20px;
   border: solid 2px black;
   background-color: white;
   border-radius: 100%;
 }
-#multi-coumn .carousel-dots .dot.active {
+#multi-column .carousel-dots .dot.active {
   background-color: black;
 }
-#multi-coumn .carousel-controls {
+#multi-column .carousel-controls {
   width: calc(100% - var(--button-gutter));
   display: flex;
   justify-content: center;
@@ -55,7 +73,7 @@
   pointer-events: none;
   z-index: 2;
 }
-#multi-coumn .carousel-controls button:disabled {
+#multi-column .carousel-controls button:disabled {
   cursor: default;
   opacity: 0.5;
 }/*# sourceMappingURL=standard.css.map */

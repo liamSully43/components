@@ -14,6 +14,36 @@
   --button-size: var(--medium);
   --button-gap: var(--x-small);
   --button-gutter: var(--medium);
+  /*
+  .carousel-container {
+      position: relative;
+
+      .slide {
+          translate: unset !important;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 1;
+          opacity: 0;
+          transition: opacity 0.5s;
+      }
+
+      .active {
+          position: relative;
+          top: 0px;
+          left: 0px;
+          transform: unset;
+          z-index: 3;
+          opacity: 1;
+      }
+
+      .next {
+          z-index: 2;
+          opacity: 0;
+      }
+  }
+  */
 }
 #full-screen .slide {
   border: solid 1px black;
@@ -52,29 +82,4 @@
 #full-screen .carousel-controls button:disabled {
   cursor: default;
   opacity: 0.5;
-}
-#full-screen .carousel-container {
-  position: relative;
-}
-#full-screen .carousel-container .slide {
-  translate: unset !important;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1;
-  opacity: 0;
-  transition: opacity 0.5s;
-}
-#full-screen .carousel-container .active {
-  position: relative;
-  top: 0px;
-  left: 0px;
-  transform: unset;
-  z-index: 3;
-  opacity: 1;
-}
-#full-screen .carousel-container .next {
-  z-index: 2;
-  opacity: 0;
 }/*# sourceMappingURL=standard-full-screen.css.map */

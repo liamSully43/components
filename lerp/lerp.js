@@ -1,38 +1,69 @@
-const cursor = document.querySelector(".cursor-container");
-let xDest = 0;
-let yDest = 0;
-window.addEventListener("mousemove", function(event) {
-    xDest = event.clientX;
-    yDest = event.clientY;
-    lerp(true);
-});
-
-let loop = false;
-function lerp(init) {
-    if(init && !loop) {
-        // first time loop is being called - set the interval
-        loop = setInterval(lerp, 20);
-    }
-    if(init && loop) {
-        // loop being called again from mousemove event
+let lerpAnimationFrame = null;
+const lerpValues = [];
+function lerp(current, target, callback, id) {
+    if(!id) {
+        console.error("missing unique identifier, lerp function will not be used");
         return;
     }
- 
 
-    const pos = cursor.getClientRects()[0];
-    let currentX = pos.left;
-    let currentY = pos.top;
-    const xDiff = (xDest - currentX) * 0.1;
-    const yDiff = (yDest - currentY) * 0.1;
-    currentX += xDiff;
-    currentY += yDiff;
-    if(xDiff <= 0.01 && yDiff <= 0.01) {
-        console.log("clear");
-        clearInterval(loop);
-        loop = false;
-        currentX = xDest;
-        currentY = yDest;
+    // check if lerp value should be added or updated
+    let matchingValue = null;
+    for(let value of lerpValues) {
+        if(value.id == id) {
+            matchingValue = value;
+            break;
+        }
     }
-    cursor.style.left = `${currentX}px`;
-    cursor.style.top = `${currentY}px`;
+
+    // update value
+    if(matchingValue !== null) {
+        const valueIndex = lerpValues.indexOf(matchingValue);
+        if(valueIndex > -1) {
+            lerpValues[valueIndex].target = target;
+        }
+    }
+    // add value
+    else {
+        const value = {
+            current: (isNaN(current)) ? 0 : current,
+            target,
+            id,
+            callback
+        }
+        lerpValues.push(value);
+
+        // start animation frame if not already running
+        if(lerpAnimationFrame == null) {
+            lerpAnimationFrame = requestAnimationFrame(lerpLoop);
+        }
+    }
+}
+
+function lerpLoop() {
+    for(let value of lerpValues) {
+        const currentVal = value.current;
+        const targetVal = (value.target == 0) ? 0.001 : value.target;
+        const lerpFormula = (1 - 0.1) * currentVal + 0.1 * targetVal;
+        value.current = lerpFormula;
+
+        const distance = (currentVal < targetVal) ? targetVal - currentVal : currentVal - targetVal;
+        if(distance < 0.1) {
+            value.current = value.target;
+            const valueIndex = lerpValues.indexOf(value);
+            if(valueIndex > -1) {
+                lerpValues.splice(valueIndex, 1);
+            }
+            value.callback(value.target);
+        }
+        else {
+            value.callback(value.current);
+        }
+    }
+    if(lerpValues.length < 1) {
+        cancelAnimationFrame(lerpAnimationFrame);
+        lerpAnimationFrame = null;
+    }
+    else {
+        requestAnimationFrame(lerpLoop);
+    }
 }

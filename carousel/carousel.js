@@ -1,7 +1,7 @@
 const carousels = $(".carousel");
-carousels.each(i => {
+carousels.each((i, carousel) => {
     // unique id
-    const id = $(carousels[i]).attr("id");
+    const id = $(carousel).attr("id");
 
     // add classes if they don't already exist
     if($(`#${id} .carousel-container .slide.active`).length < 1) {
@@ -29,10 +29,10 @@ carousels.each(i => {
         }
         
         let touchStart = 0;
-        $(carousels[i]).on("touchstart", function(event) {
+        $(carousel).on("touchstart", function(event) {
             touchStart = event.touches[0].clientX;
         });
-        $(carousels[i]).on("touchend", function(event) {
+        $(carousel).on("touchend", function(event) {
             const touchend = event.changedTouches[0].clientX;
             const difference = touchStart - touchend;
             if(touchStart > touchend) {
@@ -56,7 +56,7 @@ carousels.each(i => {
     let autoInterval = false;
     function autoSwipe() {
         // check if carousel has auto-swipe class
-        if(!$(carousels[i]).hasClass("auto-swipe")) return;
+        if(!$(carousel).hasClass("auto-swipe")) return;
         
         // clear interval if already triggered
         if(autoInterval) {
@@ -64,7 +64,7 @@ carousels.each(i => {
         }
 
         // get swipe duration
-        const dataDuration = $(carousels[i]).data("duration");
+        const dataDuration = $(carousel).data("duration");
         const duration = (dataDuration) ? parseInt(dataDuration) : 5000;
         
         // interval
@@ -76,135 +76,86 @@ carousels.each(i => {
     
     // Slide left/right
     function slidePrev() {
-        const updated = updateActiveClass(false);
-        if(!updated) return;
+        const sliding = checkIfSliding(false);
+        if(sliding) return;
         
         const width = getWidth();
         const slides = $(`#${id} .carousel-container .slide`);
-        slides.map(slide => {
-            slide = slides[slide];
-            const left = parseFloat($(slide).css("translate"));
-            const newPos = left + width;
-            $(slide).css("translate", `${newPos}px 0px`);
-        });
+        const firstSlide = $(`#${id} .carousel-container .slide:first-of-type`);
+        if($(firstSlide).hasClass("active")) {
+            const newPos = 0 - (width * (slides.length - 1));
+            const newVW = (newPos / window.innerWidth) * 100;
+            slides.map((i, slide) => {
+                $(slide).css("translate", `${newVW}vw 0px`);
+            });
+        }
+        else {
+            // slide slides
+            setTimeout(() => {
+                slides.map((i, slide) => {
+                    let left = parseFloat($(slide).css("translate"));
+                    if(isNaN(left)) left = 0; // if translate is not used on element yet, Safair will return NaN
+                    const newPos = left + width;
+                    const newVW = (newPos / window.innerWidth) * 100;
+                    $(slide).css("translate", `${newVW}vw 0px`);
+                });
+            }, 15);
+        }
 
         // reset autoswipe
         autoSwipe();
+
+        // update classes
+        slideClassesPrev();
     }
     
     function slideNext() {
-        const updated = updateActiveClass(true);
-        if(!updated) return;
+        const sliding = checkIfSliding(true);
+        if(sliding) return;
 
-        const width = getWidth();
+        // reset position if last slide is active
         const slides = $(`#${id} .carousel-container .slide`);
-        setTimeout(() => {
-            slides.map(slide => {
-                slide = slides[slide];
-                let left = parseFloat($(slide).css("translate"));
-                if(isNaN(left)) left = 0; // if translate is not used on element yet, Safair will return NaN
-                const newPos = left - width;
-                $(slide).css("translate", `${newPos}px 0px`);
+        const lastSlide = $(`#${id} .carousel-container .slide:last-of-type`);
+        if($(lastSlide).hasClass("active")) {
+            slides.map((i, slide) => {
+                $(slide).css("translate", "0px 0px");
             });
-        }, 10);
+        }
+        else {
+            // slide slides
+            const width = getWidth();
+            setTimeout(() => {
+                slides.map((i, slide) => {
+                    let left = parseFloat($(slide).css("translate"));
+                    if(isNaN(left)) left = 0; // if translate is not used on element yet, Safair will return NaN
+                    const newPos = left - width;
+                    const newVW = (newPos / window.innerWidth) * 100;
+                    $(slide).css("translate", `${newVW}vw 0px`);
+                });
+            }, 15);
+        }
 
         // reset autoswipe
         autoSwipe();
+
+        // update classes
+        slideClassesNext();
     }
     
     let sliding = false;
-    function updateActiveClass(forward) {
+    function checkIfSliding() {
         // check if currently sliding - prevents spam clicks from breaking carousel
         if(sliding) {
-            return false;
+            return true;
         }
         else {
             sliding = true;
             setTimeout(() => {sliding = false}, 550);
         }
-
-        const active = $(`#${id} .carousel-container .slide.active`);
-        if(forward) {
-            if(active.next().length < 1) {
-                // if currently on the last slide, restart
-                const slides = $(`#${id} .carousel-container .slide`);
-                setTimeout(() => {
-                    // restart
-                    slides.map(slide => {
-                        slide = slides[slide];
-                        $(slide).css("translate", "0px 0px");
-                    });
-
-                    // update classes
-                    slideClassesNext();
-
-                    // update dots
-                    if($(`#${id} .carousel-dots .dot`).length > 0) {
-                        const activeDot = $(`#${id} .carousel-dots .dot.active`);
-                        activeDot.removeClass("active");
-                        $(`#${id} .carousel-dots .dot:first-of-type`).addClass("active");
-                    }
-                }, 10);
-
-                return false;
-            }
-            else {
-                // update classes
-                slideClassesNext();
-            }
-
-            // update dots
-            if($(`#${id} .carousel-dots .dot`).length > 0) {
-                const activeDot = $(`#${id} .carousel-dots .dot.active`);
-                activeDot.removeClass("active");
-                activeDot.next().addClass("active");
-            }
-        }
-        else {
-            if(active.prev().length < 1) {
-                const slides = $(`#${id} .carousel-container .slide`);
-
-                // move slides
-                const width = getWidth() * (slides.length - 1);
-                setTimeout(() => {
-                    slides.map(slide => {
-                        slide = slides[slide];
-                        let left = parseFloat($(slide).css("translate"));
-                        if(isNaN(left)) left = 0; // if translate is not used on element yet, Safair will return NaN
-                        const newPos = left - width;
-                        $(slide).css("translate", `${newPos}px 0px`);
-                    });
-                }, 10);
-
-                // update classes
-                slideClassesPrev()
-
-                // update dots
-                if($(`#${id} .carousel-dots .dot`).length > 0) {
-                    const activeDot = $(`#${id} .carousel-dots .dot.active`);
-                    activeDot.removeClass("active");
-                    $(`#${id} .carousel-dots .dot:last-of-type`).addClass("active");
-                }
-
-                return false;
-            }
-            else {
-                // update classes
-                slideClassesPrev();
-            }
-
-            // update dots
-            if($(`#${id} .carousel-dots .dot`).length > 0) {
-                const activeDot = $(`#${id} .carousel-dots .dot.active`);
-                activeDot.removeClass("active");
-                activeDot.prev().addClass("active");
-            }
-        }
-        setTimeout(() => active.removeClass("active"), 10); // add small delay otherwise the active class is updated incorrectly on mobile
-        return true;
     }
 
     function slideClassesNext() {
+        // slide classes
         const classes = ["prev", "active", "next"];
         for(let className of classes) {
             const current = $(`#${id} .carousel-container .slide.${className}`);
@@ -216,9 +167,23 @@ carousels.each(i => {
                 $(`#${id} .carousel-container .slide:first-of-type`).addClass(className);
             }
         }
+
+        // dots classes
+        if($(`#${id} .carousel-dots .dot`).length > 0) {
+            const current = $(`#${id} .carousel-dots .dot.active`);
+            $(current).removeClass("active");
+
+            if($(current).next().length > 0) {
+                $(current).next().addClass("active");
+            }
+            else {
+                $(`#${id} .carousel-dots .dot:first-of-type`).addClass("active");
+            }
+        }
     }
 
     function slideClassesPrev() {
+        // slide classes
         const classes = ["prev", "active", "next"];
         for(let className of classes) {
             const current = $(`#${id} .carousel-container .slide.${className}`);
@@ -228,6 +193,19 @@ carousels.each(i => {
             }
             else {
                 $(`#${id} .carousel-container .slide:last-of-type`).addClass(className);
+            }
+        }
+
+        // dots classes
+        if($(`#${id} .carousel-dots .dot`).length > 0) {
+            const current = $(`#${id} .carousel-dots .dot.active`);
+            $(current).removeClass("active");
+
+            if($(current).prev().length > 0) {
+                $(current).prev().addClass("active");
+            }
+            else {
+                $(`#${id} .carousel-dots .dot:last-of-type`).addClass("active");
             }
         }
     }
@@ -272,8 +250,8 @@ carousels.each(i => {
 
         // update dots
         let currentIndex = 0;
-        dots.each(i => {
-            if($(dots[i]).hasClass("active")) currentIndex = i;
+        dots.each((i, dot) => {
+            if($(dot).hasClass("active")) currentIndex = i;
         });
         const difference = currentIndex - index; // number of slides to slide
         $(`#${id} .dot.active`).removeClass("active");
@@ -282,22 +260,21 @@ carousels.each(i => {
         // move slides
         const width = getWidth() * difference;
         setTimeout(() => {
-            slides.map(slide => {
-                slide = slides[slide];
+            slides.map((i, slide) => {
                 let left = parseFloat($(slide).css("translate"));
                 if(isNaN(left)) left = 0; // if translate is not used on element yet, Safair will return NaN
                 const newPos = left + width;
-                $(slide).css("translate", `${newPos}px 0px`);
+                const newVW = (newPos / window.innerWidth) * 100;
+                $(slide).css("translate", `${newVW}vw 0px`);
             });
-        }, 10);
+        }, 15);
 
         // reset auto swipe
         autoSwipe();
     }
-    if($(carousels[i]).find(".carousel-dots").length > 0) {
+    if($(carousel).find(".carousel-dots").length > 0) {
         const dots = $(`#${id} .dot`);
-        dots.each(j => {
-            const dot = dots[j];
+        dots.each((j, dot) => {
             $(dot).on("click", () => selectSlide(j, dots));
         })
     }

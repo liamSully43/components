@@ -5,21 +5,19 @@ html, body {
   overflow: hidden;
 }
 
-.cursor-container {
+.cursor {
   position: absolute;
-  left: 0px;
   top: 0px;
-}
-.cursor-container .cursor {
+  left: 0px;
+  transform: translate(-50%, -50%);
   width: 20px;
   height: 20px;
   border-radius: 100%;
-  transform: translate(-50%, -50%);
   background-color: transparent;
   border: solid 1px #000;
   transition: background-color 0.3s;
 }
-.cursor-container .cursor:hover {
+.cursor:hover {
   background-color: #000;
   transition-duration: 0.5s;
 }/*# sourceMappingURL=lerp.css.map */
