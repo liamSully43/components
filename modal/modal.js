@@ -1,27 +1,29 @@
-window.onload = function() {
-    // open modals
-    const modalLinks = document.querySelectorAll(".modal-link");
-    for(let modalLink of modalLinks) {
-        modalLink.addEventListener("click", function() {
-            const ref = modalLink.dataset.ref;
+$(window).on("load", function() {
+    $(".modal-link").each((i, link) => {
+        $(link).on("click", function() {
+            // show modal
+            const ref = $(link).attr("data-ref");
             if(ref) {
-                document.querySelector(`#${ref}`).classList.add("active");
+                $(`#${ref}`).addClass("active");
+            }
+
+            // update youtube video iframe, if button has a YouTube ID
+            const ytID = $(link).attr("data-yt");
+            if(ytID) {
+                const src = `https://www.youtube-nocookie.com/embed/${ytID}?controls=0&autoplay=1`;
+                $(`#${ref} iframe`).attr("src", src);
             }
         });
-    }
+    })
 
-    // close modals
-    const closeBttns = document.querySelectorAll(".close");
-    for(let close of closeBttns) {
-        close.addEventListener("click", function() {
-            if(close.parentElement.classList.contains("modal")) {
-                // direct parent
-                close.parentElement.classList.remove("active");
-            }
-            else if(close.parentElement.parentElement.classList.contains("modal")) {
-                // close button placed inside .content
-                close.parentElement.parentElement.classList.remove("active");
+    $(".close").each((i, bttn) => {
+        $(bttn).on("click", function() {
+            $(bttn).parents(".modal").removeClass("active");
+
+            // reset iframe if iframe exists
+            if($(bttn).parents(".modal").find("iframe").length > 0) {
+                $(bttn).parents(".modal").find("iframe").attr("src", "");
             }
         })
-    }
-}
+    })
+})
